@@ -159,4 +159,6 @@ while should_continue:
         print("Invalid chain, try again")
         break
 
+    print(f'Balance of {owner}: {get_balance(owner):6.2f}')
+
 print('Finished')
