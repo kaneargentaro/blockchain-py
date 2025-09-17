@@ -86,6 +86,7 @@ def get_user_action():
     print("\t2: Mine blockchain")
     print("\t3: Print blockchain")
     print("\t4: Print participants")
+    print("\t5: Check transaction validity")
     print("\th: Manipulate the blockchain")
     print("\tq: Exit")
     return input("User input: ")
@@ -100,6 +101,9 @@ def verify_chain():
             return False
     return True
 
+
+def verify_transactions():
+    return all([verify_transaction(tx) for tx in open_transactions])
 
 def get_balance(participant):
     tx_sender = [[tx['amount'] for tx in block['transactions'] if tx['sender' == participant]] for block in blockchain]
@@ -134,6 +138,11 @@ while should_continue:
         print_blockchain(blockchain)
     elif action == '4':
         print(participants)
+    elif action == '5':
+        if (verify_transactions()):
+            print('Transactions verified.')
+        else:
+            print('Transactions failed.')
     elif action == 'h':
         if len(blockchain) >= 1:
             blockchain[0] = {
