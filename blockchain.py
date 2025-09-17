@@ -55,10 +55,11 @@ def verify_chain():
 
 should_continue = True
 while should_continue:
-    action=get_user_action()
+    action = get_user_action()
     if action == '1':
-        tx_amount = get_transaction_value()
-        add_value(transaction_amount=tx_amount, last_transaction=get_last_blockchain_value())
+        tx_data = get_transaction_value()
+        recipient, amount = tx_data
+        add_transaction(recipient=recipient, amount=amount)
     elif action == '2':
         print_blockchain(blockchain)
     elif action == 'h':
