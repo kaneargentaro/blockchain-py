@@ -53,8 +53,8 @@ def verify_chain():
         block_index += 1
     return True
 
-
-while True:
+should_continue = True
+while should_continue:
     action=get_user_action()
     if action == '1':
         tx_amount = get_transaction_value()
@@ -65,7 +65,7 @@ while True:
         if len(blockchain) >= 1:
             blockchain[0] = [2]
     elif action == 'q':
-        break
+        should_continue = False
     else:
         print("Invalid input, try again")
 
