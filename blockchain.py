@@ -38,8 +38,21 @@ def get_user_action():
     print("\nWhat would you like to do?")
     print("\t1: Add a new transaction value")
     print("\t2: Print blockchain")
+    print("\th: Manipulate the blockchain")
     print("\tq: Exit")
     return input("User input: ")
+
+def verify_chain():
+    block_index = 0
+    for block in blockchain:
+        if block_index == 0:
+            block_index += 1
+            continue
+        elif block[0] != blockchain[block_index - 1]:
+            return False
+        block_index += 1
+    return True
+
 
 while True:
     action=get_user_action()
@@ -48,9 +61,16 @@ while True:
         add_value(transaction_amount=tx_amount, last_transaction=get_last_blockchain_value())
     elif action == '2':
         print_blockchain(blockchain)
+    elif action == 'h':
+        if len(blockchain) >= 1:
+            blockchain[0] = [2]
     elif action == 'q':
         break
     else:
         print("Invalid input, try again")
+
+    if not verify_chain():
+        print("Invalid chain, try again")
+        break
 
 print('Finished')
