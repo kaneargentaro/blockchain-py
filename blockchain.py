@@ -1,7 +1,7 @@
 from functools import reduce
-from hashlib import sha256
-import json
 from collections import OrderedDict
+
+from hash_util import hash_string_256, hash_block
 
 MINING_REWARD = 10
 genesis_block = {
@@ -14,10 +14,6 @@ blockchain = [genesis_block]
 open_transactions = []
 owner = 'John'
 participants = set(owner)
-
-
-def hash_block(block):
-    return sha256(json.dumps(block).encode()).hexdigest()
 
 
 def add_transaction(recipient, sender=owner, amount=1.0):
@@ -48,7 +44,7 @@ def proof_of_work():
 
 def valid_proof(transactions, last_hash, proof):
     guess = (str(transactions) + str(last_hash) + str(proof)).encode()
-    guess_hash = sha256(guess).hexdigest()
+    guess_hash = hash_string_256(guess)
     return guess_hash[:2] == '00'
 
 
