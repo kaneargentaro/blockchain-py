@@ -1,6 +1,7 @@
 from functools import reduce
 from hashlib import sha256
 import json
+from collections import OrderedDict
 
 MINING_REWARD = 10
 genesis_block = {
@@ -27,11 +28,7 @@ def add_transaction(recipient, sender=owner, amount=1.0):
         :recipient: The recipient of the coins
         :amount: The amount of the coins
     """
-    transaction = {
-        'sender': sender,
-        'recipient': recipient,
-        'amount': amount
-    }
+    transaction = OrderedDict([('sender', sender), ('recipient', recipient), ('amount', amount)])
     if verify_transaction(transaction):
         open_transactions.append(transaction)
         participants.add(recipient)
@@ -45,7 +42,7 @@ def proof_of_work():
     last_hash = hash_block(last_block)
     proof = 0
     while not valid_proof(open_transactions, last_hash, proof):
-        proof +=1
+        proof += 1
     return proof
 
 
@@ -60,15 +57,12 @@ def verify_transaction(transaction):
     sender_balance = get_balance(transaction['sender'])
     return sender_balance >= transaction['amount']
 
+
 def mine_block():
     """ Mines a new block"""
     last_block = blockchain[-1]
     proof = proof_of_work()
-    reward_transaction = {
-        'sender': 'MINING',
-        'recipient': owner,
-        'amount': MINING_REWARD
-    }
+    reward_transaction = OrderedDict([('sender', 'MINING'), ('recipient', owner), ('amount', MINING_REWARD)])
     copied_open_transactions = open_transactions[:]
     copied_open_transactions.append(reward_transaction)
     block = {
@@ -130,13 +124,16 @@ def verify_chain():
 def verify_transactions():
     return all([verify_transaction(tx) for tx in open_transactions])
 
+
 def get_balance(participant):
     tx_sender = [[tx['amount'] for tx in block['transactions'] if tx['sender' == participant]] for block in blockchain]
     open_tx_sender = [tx for tx in open_transactions if tx['sender'] == participant]
     tx_sender.append(open_tx_sender)
     amount_sent = reduce(lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0, tx_sender, 0)
-    tx_recipient = [[tx['amount'] for tx in block['transactions'] if tx['recipient' == participant]] for block in blockchain]
-    amount_received = reduce(lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0, tx_recipient, 0)
+    tx_recipient = [[tx['amount'] for tx in block['transactions'] if tx['recipient' == participant]] for block in
+                    blockchain]
+    amount_received = reduce(lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0,
+                             tx_recipient, 0)
     return amount_received - amount_sent
 
 
