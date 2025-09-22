@@ -46,7 +46,7 @@ class Node:
             elif action == '3':
                 self.print_blockchain()
             elif action == '4':
-                if Verification.verify_transactions(self.blockchain.open_transactions, self.blockchain.get_balance):
+                if Verification.verify_transactions(self.blockchain.get_open_transactions(), self.blockchain.get_balance):
                     print('Transactions verified.')
                 else:
                     print('Transactions failed.')
