@@ -5,7 +5,6 @@ from transaction import Transaction
 from hash_util import hash_block
 from verification import Verification
 
-
 MINING_REWARD = 10
 
 
@@ -31,8 +30,13 @@ class Blockchain:
     def chain(self, new_chain):
         self.__chain = new_chain
 
-    def get_open_transactions(self):
+    @property
+    def open_transactions(self):
         return self.__open_transactions[:]
+
+    @open_transactions.setter
+    def open_transactions(self, new_val):
+        self.__open_transactions = new_val
 
     def load_data(self):
         try:
@@ -63,7 +67,7 @@ class Blockchain:
                 transactions_json = data_lines[1]
                 raw_transactions = json.loads(transactions_json)
 
-                self.__open_transactions = [
+                self.open_transactions = [
                     {
                         Transaction(
                             tx['sender'],
@@ -80,7 +84,7 @@ class Blockchain:
 
     def save_data(self):
         try:
-            with (open('blockchain.txt', 'w') as outfile):
+            with open('blockchain.txt', 'w') as outfile:
                 savable_chain = [
                     block.__dict__ for block in [
                         Block(
@@ -97,12 +101,14 @@ class Blockchain:
                 ]
                 outfile.write(json.dumps(savable_chain))
                 outfile.write('\n')
-                savable_tx = [tx.__dict__ for tx in self.__open_transactions]
+                savable_tx = [tx.__dict__ for tx in self.open_transactions]
                 outfile.write(json.dumps(savable_tx))
         except (IOError, IndexError):
             print('Could not save blockchain')
 
     def proof_of_work(self):
+        """Generate proof of work for mining."""
+        # Use direct access for performance
         last_block = self.__chain[-1]
         last_hash = hash_block(last_block)
         proof = 0
@@ -111,16 +117,33 @@ class Blockchain:
         return proof
 
     def get_balance(self):
+        """Calculate balance for hosting node."""
         participant = self.hosting_node
-        tx_sender = [[tx.amount for tx in block.transactions if tx.sender == participant] for block in self.__chain]
-        open_tx_sender = [tx for tx in self.__open_transactions if tx.sender == participant]
+
+        # Use direct access for internal calculations (avoid unnecessary copies)
+        tx_sender = [
+            [tx.amount for tx in block.transactions if tx.sender == participant]
+            for block in self.__chain
+        ]
+        open_tx_sender = [
+            tx.amount for tx in self.__open_transactions if tx.sender == participant
+        ]
         tx_sender.append(open_tx_sender)
-        amount_sent = reduce(lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0, tx_sender,
-                             0)
-        tx_recipient = [[tx.amount for tx in block.transactions if tx.recipient == participant] for block in
-                        self.__chain]
-        amount_received = reduce(lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0,
-                                 tx_recipient, 0)
+
+        amount_sent = reduce(
+            lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0,
+            tx_sender, 0
+        )
+
+        tx_recipient = [
+            [tx.amount for tx in block.transactions if tx.recipient == participant]
+            for block in self.__chain
+        ]
+        amount_received = reduce(
+            lambda tx_sum, tx_amt: tx_sum + sum(tx_amt) if len(tx_amt) > 0 else tx_sum + 0,
+            tx_recipient, 0
+        )
+
         return amount_received - amount_sent
 
     def get_last_blockchain_value(self):
@@ -150,9 +173,9 @@ class Blockchain:
         last_block = self.__chain[-1]
         proof = self.proof_of_work()
         reward_transaction = Transaction(sender='MINING', recipient=self.hosting_node, amount=MINING_REWARD)
-        copied_open_transactions = self.get_open_transactions()
+        copied_open_transactions = self.__open_transactions[:]
         copied_open_transactions.append(reward_transaction)
-        block = Block(len(self.__chain), hash_block(last_block), copied_open_transactions, proof)
+        block = Block(len(self.chain), hash_block(last_block), copied_open_transactions, proof)
         self.__chain.append(block)
         self.__open_transactions = []
         self.save_data()
