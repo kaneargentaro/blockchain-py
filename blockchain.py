@@ -9,7 +9,6 @@ MINING_REWARD = 10
 blockchain = []
 open_transactions = []
 owner = 'John'
-participants = set(owner)
 
 
 def load_data():
@@ -178,8 +177,7 @@ def get_user_action():
     print("\t1: Add a new transaction value")
     print("\t2: Mine blockchain")
     print("\t3: Print blockchain")
-    print("\t4: Print participants")
-    print("\t5: Check transaction validity")
+    print("\t4: Check transaction validity")
     print("\tq: Exit")
     return input("User input: ")
 
@@ -231,8 +229,6 @@ while should_continue:
     elif action == '3':
         print_blockchain(blockchain)
     elif action == '4':
-        print(participants)
-    elif action == '5':
         if verify_transactions():
             print('Transactions verified.')
         else:
