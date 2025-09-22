@@ -46,8 +46,7 @@ class Node:
             elif action == '3':
                 self.print_blockchain()
             elif action == '4':
-                verifier = Verification()
-                if verifier.verify_transactions(self.blockchain.open_transactions, self.blockchain.get_balance):
+                if Verification.verify_transactions(self.blockchain.open_transactions, self.blockchain.get_balance):
                     print('Transactions verified.')
                 else:
                     print('Transactions failed.')
@@ -56,8 +55,7 @@ class Node:
             else:
                 print("Invalid input, try again")
 
-            verifier = Verification()
-            if not verifier.verify_chain(blockchain=self.blockchain.chain):
+            if not Verification.verify_chain(blockchain=self.blockchain.chain):
                 print("Invalid chain, try again")
                 break
 
