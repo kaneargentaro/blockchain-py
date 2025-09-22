@@ -65,13 +65,11 @@ class Blockchain:
 
                 self.__open_transactions = [
                     {
-                        'transactions': [
-                            Transaction(
-                                tx['sender'],
-                                tx['recipient'],
-                                tx['amount'],
-                            ) for tx in block['transactions']
-                        ],
+                        Transaction(
+                            tx['sender'],
+                            tx['recipient'],
+                            tx['amount'],
+                        ) for tx in block['transactions']
                     }
                     for block in raw_transactions
                 ]
