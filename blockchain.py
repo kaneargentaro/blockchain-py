@@ -36,7 +36,7 @@ class Blockchain:
 
     def load_data(self):
         try:
-            with open('data.json', 'r') as f:
+            with open('blockchain.txt', 'r') as f:
                 data_lines = f.readlines()
 
                 blockchain_json = data_lines[0].rstrip('\n')
