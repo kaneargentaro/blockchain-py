@@ -25,7 +25,7 @@ class Verification:
         return guess_hash[:2] == '00'
 
     @staticmethod
-    def verify_transaction(cls, transaction, get_balance):
+    def verify_transaction(transaction, get_balance):
         """ Verifies if the transaction is valid"""
         sender_balance = get_balance()
         return sender_balance >= transaction.amount
