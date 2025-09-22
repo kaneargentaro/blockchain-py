@@ -159,7 +159,6 @@ def get_user_action():
     print("\t3: Print blockchain")
     print("\t4: Print participants")
     print("\t5: Check transaction validity")
-    print("\th: Manipulate the blockchain")
     print("\tq: Exit")
     return input("User input: ")
 
@@ -217,13 +216,6 @@ while should_continue:
             print('Transactions verified.')
         else:
             print('Transactions failed.')
-    elif action == 'h':
-        if len(blockchain) >= 1:
-            blockchain[0] = {
-                'previous_hash': '',
-                'index': 0,
-                'transactions': [{'sender': "Chris", 'recipient': "Max", 'amount': 12}],
-            }
     elif action == 'q':
         should_continue = False
     else:
