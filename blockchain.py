@@ -60,8 +60,9 @@ def load_data():
 
 def save_data():
     try:
-        with (open('blockchain.p', 'w') as outfile):
-            outfile.write(json.dumps(blockchain))
+        with (open('blockchain.txt', 'w') as outfile):
+            savable_chain = [block.__dict__ for block in blockchain]
+            outfile.write(json.dumps(savable_chain))
             outfile.write('\n')
             outfile.write(json.dumps(open_transactions))
             # save_data = {
