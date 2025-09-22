@@ -1,3 +1,4 @@
+import json
 from functools import reduce
 from collections import OrderedDict
 
@@ -15,6 +16,43 @@ open_transactions = []
 owner = 'John'
 participants = set(owner)
 
+def load_data():
+    with open('data.json', 'r') as f:
+        data = f.readline()
+        global blockchain
+        global open_transactions
+        blockchain = json.loads(data[0][:-1])
+        blockchain = [{
+            'previous_hash': block['previous_hash'],
+            'index': block['index'],
+            'proof': block['proof'],
+            'transactions': [
+                OrderedDict(
+                    [
+                        ('sender', tx['sender']),
+                        ('recipient', tx['recipient']),
+                        ('amount', tx['amount']),
+                    ]) for tx in block['transactions']
+            ],
+        } for block in blockchain]
+        open_transactions = json.loads(data[1])
+        open_transactions = [{
+            'transactions': [
+                OrderedDict(
+                    [
+                        ('sender', tx['sender']),
+                        ('recipient', tx['recipient']),
+                        ('amount', tx['amount']),
+                    ]) for tx in block['transactions']
+            ],
+        } for block in open_transactions]
+
+def save_data():
+    with open('data.json', 'w') as outfile:
+        outfile.write(json.dumps(blockchain))
+        outfile.write('\n')
+        outfile.write(json.dumps(open_transactions))
+
 
 def add_transaction(recipient, sender=owner, amount=1.0):
     """ Adds a transaction value to the blockchain
@@ -29,6 +67,7 @@ def add_transaction(recipient, sender=owner, amount=1.0):
         open_transactions.append(transaction)
         participants.add(recipient)
         participants.add(sender)
+        save_data()
         return True
     return False
 
@@ -133,6 +172,8 @@ def get_balance(participant):
     return amount_received - amount_sent
 
 
+load_data()
+
 should_continue = True
 while should_continue:
     action = get_user_action()
@@ -146,6 +187,7 @@ while should_continue:
     elif action == '2':
         if mine_block():
             open_transactions = []
+            save_data()
     elif action == '3':
         print_blockchain(blockchain)
     elif action == '4':
