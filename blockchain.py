@@ -24,7 +24,7 @@ def load_data():
         # global open_transactions
         # blockchain = file_content['chain']
         # open_transactions = file_content['ot']
-        data = f.readline()
+        data = f.readlines()
         global blockchain
         global open_transactions
         blockchain = json.loads(data[0][:-1])
