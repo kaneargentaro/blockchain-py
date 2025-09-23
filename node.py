@@ -3,12 +3,14 @@ from blockchain import Blockchain
 from utils.verification import Verification
 from wallet import Wallet
 
+
 class Node:
     def __init__(self):
         self.wallet = Wallet()
         self.blockchain = None
 
-    def get_user_action(self):
+    @staticmethod
+    def get_user_action():
         """ Returns the user input for transactions in a float"""
         print("\nWhat would you like to do?")
         print("\t1: Add a new transaction value")
@@ -26,7 +28,8 @@ class Node:
         for block in self.blockchain.chain:
             print(block)
 
-    def get_transaction_value(self):
+    @staticmethod
+    def get_transaction_value():
         """ Returns the user input for transactions in a float"""
         tx_recipient = input("Enter recipient: ")
         tx_amount = float(input("Enter amount: "))
@@ -39,7 +42,9 @@ class Node:
             if action == '1':
                 tx_data = self.get_transaction_value()
                 recipient, amount = tx_data
-                if self.blockchain.add_transaction(recipient=recipient, sender=self.wallet.public_key, amount=amount):
+                signature = self.wallet.sign_transaction(self.wallet.public_key, recipient, amount)
+                if self.blockchain.add_transaction(recipient=recipient, sender=self.wallet.public_key, amount=amount,
+                                                   signature=signature):
                     print('Transaction added.')
                 else:
                     print('Transaction failed.')
@@ -73,6 +78,7 @@ class Node:
             print(f'Balance of {self.wallet.public_key}: {self.blockchain.get_balance():6.2f}')
 
         print('Finished')
+
 
 if __name__ == '__main__':
     node = Node()
