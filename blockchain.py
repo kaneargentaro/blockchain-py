@@ -161,6 +161,8 @@ class Blockchain:
             :recipient: The recipient of the coins
             :amount: The amount of the coins
         """
+        if self.hosting_node is None:
+            return False
         transaction = Transaction(sender=sender, recipient=recipient, amount=amount)
         if Verification.verify_transaction(transaction, self.get_balance):
             self.__open_transactions.append(transaction)
@@ -170,6 +172,8 @@ class Blockchain:
 
     def mine_block(self):
         """ Mines a new block"""
+        if self.hosting_node is None:
+            return False
         last_block = self.__chain[-1]
         proof = self.proof_of_work()
         reward_transaction = Transaction(sender='MINING', recipient=self.hosting_node, amount=MINING_REWARD)

@@ -1,12 +1,12 @@
 from blockchain import Blockchain
 
 from utils.verification import Verification
-
+from wallet import Wallet
 
 class Node:
     def __init__(self):
-        self.id = 'John' #str(uuid4())
-        self.blockchain = Blockchain(self.id)
+        self.wallet = Wallet()
+        self.blockchain = None
 
     def get_user_action(self):
         """ Returns the user input for transactions in a float"""
@@ -15,6 +15,8 @@ class Node:
         print("\t2: Mine blockchain")
         print("\t3: Print blockchain")
         print("\t4: Check transaction validity")
+        print("\t5: Create wallet")
+        print("\t6: Load wallet")
         print("\tq: Exit")
         return input("User input: ")
 
@@ -36,12 +38,13 @@ class Node:
             if action == '1':
                 tx_data = self.get_transaction_value()
                 recipient, amount = tx_data
-                if self.blockchain.add_transaction(recipient=recipient, sender=self.id, amount=amount):
+                if self.blockchain.add_transaction(recipient=recipient, sender=self.wallet.public_key, amount=amount):
                     print('Transaction added.')
                 else:
                     print('Transaction failed.')
             elif action == '2':
-                self.blockchain.mine_block()
+                if not self.blockchain.mine_block():
+                    print("Mining failed. Are you missing a wallet?")
             elif action == '3':
                 self.print_blockchain()
             elif action == '4':
@@ -49,6 +52,11 @@ class Node:
                     print('Transactions verified.')
                 else:
                     print('Transactions failed.')
+            elif action == '5':
+                self.wallet.create_keys()
+                self.blockchain = Blockchain(self.wallet.public_key)
+            elif action == '6':
+                pass
             elif action == 'q':
                 should_continue = False
             else:
@@ -58,7 +66,7 @@ class Node:
                 print("Invalid chain, try again")
                 break
 
-            print(f'Balance of {self.id}: {self.blockchain.get_balance():6.2f}')
+            print(f'Balance of {self.wallet.public_key}: {self.blockchain.get_balance():6.2f}')
 
         print('Finished')
 
