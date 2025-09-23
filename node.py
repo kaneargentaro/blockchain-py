@@ -17,6 +17,7 @@ class Node:
         print("\t4: Check transaction validity")
         print("\t5: Create wallet")
         print("\t6: Load wallet")
+        print("\t6: Save wallet")
         print("\tq: Exit")
         return input("User input: ")
 
@@ -56,7 +57,10 @@ class Node:
                 self.wallet.create_keys()
                 self.blockchain = Blockchain(self.wallet.public_key)
             elif action == '6':
-                pass
+                self.wallet.load_keys()
+                self.blockchain = Blockchain(self.wallet.public_key)
+            elif action == '7':
+                self.wallet.save_keys()
             elif action == 'q':
                 should_continue = False
             else:
