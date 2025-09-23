@@ -1,6 +1,10 @@
 from hashlib import sha256
 import json
 
+# List of functions to export
+# Without this, it would export sha256 and json as well
+__all__ = ['hash_string_256', 'hash_block']
+
 def hash_string_256(string):
     return sha256(string).hexdigest()
 

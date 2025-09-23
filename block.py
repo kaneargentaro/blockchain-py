@@ -1,5 +1,5 @@
 from time import time
-from printable import Print
+from utils.printable import Print
 
 class Block(Print):
     def __init__(self, index, previous_hash, transactions, proof, timestamp=None):

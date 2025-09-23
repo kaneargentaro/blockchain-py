@@ -1,7 +1,6 @@
 from blockchain import Blockchain
-from uuid import uuid4
 
-from verification import Verification
+from utils.verification import Verification
 
 
 class Node:
