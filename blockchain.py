@@ -121,6 +121,9 @@ class Blockchain:
 
     def get_balance(self):
         """Calculate balance for hosting node."""
+        if self.hosting_node is None:
+            return None
+
         participant = self.hosting_node
 
         # Use direct access for internal calculations (avoid unnecessary copies)
